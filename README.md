@@ -73,6 +73,42 @@ Then open <http://localhost:7000/configure>, choose your options and click
 | `MEDIA_TTL` | `86400` | How long stored torrents stay fresh (s) |
 | `DISABLED_PROVIDERS` | – | Comma-separated provider ids to disable |
 
+## Deploy
+
+The addon ships as a small multi-stage Docker image (runs as a non-root user,
+persists the SQLite cache to a volume).
+
+> **Important:** set `BASE_URL` to the public URL of your instance. Debrid
+> playback links point back at this addon, so they break if `BASE_URL` is wrong.
+
+### Docker
+
+```bash
+docker build -t torrentplus .
+docker run -d --name torrentplus -p 7000:7000 \
+  -e BASE_URL=https://your-domain.example \
+  -v torrentplus-data:/app/data \
+  torrentplus
+```
+
+### docker compose
+
+```bash
+BASE_URL=https://your-domain.example docker compose up -d
+```
+
+### Fly.io
+
+```bash
+fly apps create torrentplus
+fly volumes create torrentplus_data --size 1 --region ams
+fly secrets set BASE_URL=https://<your-app>.fly.dev
+fly deploy
+```
+
+Then open `https://<your-domain>/configure`, pick your options (and paste your
+RealDebrid token), and click **Install in Stremio**.
+
 ## Tests
 
 ```bash

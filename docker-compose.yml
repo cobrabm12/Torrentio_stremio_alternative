@@ -1,0 +1,23 @@
+services:
+  torrentplus:
+    build: .
+    image: torrentplus
+    container_name: torrentplus
+    restart: unless-stopped
+    ports:
+      - "7000:7000"
+    environment:
+      # Public URL of this instance. REQUIRED for debrid playback links to work
+      # (Stremio fetches the resolve URL from here). Set to your domain in prod,
+      # e.g. https://torrentplus.example.com
+      BASE_URL: ${BASE_URL:-http://localhost:7000}
+      PORT: "7000"
+      # Optional tuning:
+      # MEDIA_TTL: "86400"
+      # DISABLED_PROVIDERS: ""
+    volumes:
+      # Persist the lazy SQLite cache across restarts/redeploys.
+      - torrentplus-data:/app/data
+
+volumes:
+  torrentplus-data:
