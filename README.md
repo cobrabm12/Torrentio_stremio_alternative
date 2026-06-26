@@ -1,5 +1,7 @@
 # Torrent+ — modern Stremio torrent addon
 
+![CI](https://github.com/cobrabm12/Torrentio_stremio_alternative/actions/workflows/ci.yml/badge.svg)
+
 A fast, modern, optimized alternative to Torrentio. It finds torrent streams
 for movies and series and exposes them to [Stremio](https://www.stremio.com/)
 with **advanced quality, audio, HDR and language control** plus optional
@@ -83,12 +85,23 @@ persists the SQLite cache to a volume).
 
 ### Docker
 
+Build locally:
+
 ```bash
 docker build -t torrentplus .
 docker run -d --name torrentplus -p 7000:7000 \
   -e BASE_URL=https://your-domain.example \
   -v torrentplus-data:/app/data \
   torrentplus
+```
+
+Or pull the image published by CI on the default branch:
+
+```bash
+docker run -d --name torrentplus -p 7000:7000 \
+  -e BASE_URL=https://your-domain.example \
+  -v torrentplus-data:/app/data \
+  ghcr.io/cobrabm12/torrentio_stremio_alternative:latest
 ```
 
 ### docker compose
