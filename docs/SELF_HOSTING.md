@@ -75,7 +75,80 @@ the container with `BASE_URL=https://torrent.example.com`.
 
 ---
 
-## 2b. Alternative: Caddy reverse proxy + port forwarding
+## 2b. You already run Caddy with other sites/subdomains
+
+If your server already serves several sites through one Caddy instance, **don't**
+add another Caddy — just add a subdomain block pointing at this app. Pick the
+variant matching how your Caddy runs.
+
+### Caddy runs on the host (systemd)
+
+Bind the app to localhost only (not exposed on the LAN) — drop this
+`docker-compose.override.yml` next to the repo's compose file:
+
+```yaml
+services:
+  torrentplus:
+    ports:
+      - "127.0.0.1:7000:7000"
+```
+
+Start it:
+
+```bash
+BASE_URL=https://torrent.example.com docker compose up -d --build
+```
+
+Add to your existing **Caddyfile** (alongside your other site blocks):
+
+```
+torrent.example.com {
+    reverse_proxy localhost:7000
+}
+```
+
+Reload Caddy:
+
+```bash
+sudo systemctl reload caddy        # or: caddy reload --config /etc/caddy/Caddyfile
+```
+
+### Caddy runs in Docker
+
+Attach the app to the same Docker network as your Caddy container and reach it
+by container name. Assuming your Caddy uses an external network called `web`,
+add a `docker-compose.override.yml`:
+
+```yaml
+services:
+  torrentplus:
+    # No published ports needed — Caddy reaches it over the shared network.
+    ports: !reset []
+    networks:
+      - web
+
+networks:
+  web:
+    external: true
+```
+
+Then in your existing **Caddyfile**:
+
+```
+torrent.example.com {
+    reverse_proxy torrentplus:7000
+}
+```
+
+Reload Caddy (e.g. `docker exec <caddy> caddy reload --config /etc/caddy/Caddyfile`).
+
+> Whichever variant: `BASE_URL` must equal `https://torrent.example.com`, and
+> add a DNS record for `torrent.example.com` pointing at your server (same as
+> your other subdomains). Caddy will issue the certificate automatically.
+
+---
+
+## 2c. Alternative: dedicated Caddy reverse proxy + port forwarding
 
 Use this if you'd rather forward ports than use Cloudflare. Requires:
 - a domain (or a free DuckDNS hostname) pointing at your home IP, and
