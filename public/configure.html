@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Torrent+ · Configure</title>
+    <style>
+      :root {
+        --bg: #0f1115;
+        --panel: #181b22;
+        --panel-2: #1f232c;
+        --accent: #7c5cff;
+        --accent-2: #4cd3c2;
+        --text: #e8eaf0;
+        --muted: #9aa0ad;
+        --border: #2a2f3a;
+        --ok: #3ddc84;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: radial-gradient(1200px 600px at 20% -10%, #20143a 0%, var(--bg) 55%);
+        color: var(--text);
+        min-height: 100vh;
+        padding: 32px 16px 80px;
+      }
+      .wrap { max-width: 860px; margin: 0 auto; }
+      header { text-align: center; margin-bottom: 28px; }
+      header h1 {
+        font-size: 40px; margin: 0;
+        background: linear-gradient(90deg, var(--accent), var(--accent-2));
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
+      header p { color: var(--muted); margin: 8px 0 0; }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+      }
+      .card h2 { font-size: 15px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 0 0 14px; }
+      .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+      .chip {
+        padding: 8px 14px; border-radius: 999px; border: 1px solid var(--border);
+        background: var(--panel-2); color: var(--text); cursor: pointer; user-select: none;
+        font-size: 14px; transition: .15s;
+      }
+      .chip:hover { border-color: var(--accent); }
+      .chip.active { background: linear-gradient(90deg, var(--accent), #6a4cff); border-color: transparent; }
+      .row { display: flex; gap: 18px; flex-wrap: wrap; }
+      .row > .field { flex: 1 1 180px; }
+      label.field-label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 6px; }
+      input, select {
+        width: 100%; padding: 10px 12px; border-radius: 10px;
+        border: 1px solid var(--border); background: var(--panel-2); color: var(--text); font-size: 14px;
+      }
+      input:focus, select:focus { outline: none; border-color: var(--accent); }
+      .toggle { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0; }
+      .toggle input { width: auto; }
+      .install {
+        position: sticky; bottom: 16px; margin-top: 8px;
+        background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px;
+        box-shadow: 0 12px 40px rgba(0,0,0,.4);
+      }
+      .url {
+        font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted);
+        background: #0c0e12; border: 1px solid var(--border); border-radius: 10px; padding: 10px;
+        word-break: break-all; margin-bottom: 12px;
+      }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      button.btn {
+        flex: 1 1 160px; padding: 13px 18px; border: none; border-radius: 12px; font-size: 15px;
+        font-weight: 600; cursor: pointer; color: white;
+      }
+      .btn-primary { background: linear-gradient(90deg, var(--accent), #6a4cff); }
+      .btn-ghost { background: var(--panel-2); border: 1px solid var(--border); }
+      .hint { font-size: 12px; color: var(--muted); margin-top: 6px; }
+      .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+      @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Torrent+</h1>
+        <p>Fast, modern torrent streams for Stremio — advanced quality, audio &amp; HDR control.</p>
+      </header>
+
+      <div class="card">
+        <h2>Providers</h2>
+        <div class="chips" id="providers"></div>
+        <div class="hint">Leave all off to use every provider.</div>
+      </div>
+
+      <div class="card">
+        <h2>Quality / Resolution</h2>
+        <div class="chips" id="qualities"></div>
+      </div>
+
+      <div class="card">
+        <h2>Video codec &amp; HDR</h2>
+        <div class="chips" id="videoCodecs"></div>
+        <label class="toggle" style="margin-top:12px">
+          <input type="checkbox" id="hdrOnly" /> HDR / Dolby Vision only
+        </label>
+      </div>
+
+      <div class="card">
+        <h2>Audio codec</h2>
+        <div class="chips" id="audioCodecs"></div>
+        <h2 style="margin-top:18px">Audio channels</h2>
+        <div class="chips" id="audioChannels"></div>
+      </div>
+
+      <div class="card">
+        <h2>Languages</h2>
+        <div class="chips" id="languages"></div>
+        <label class="toggle" style="margin-top:12px">
+          <input type="checkbox" id="strictLanguage" /> Only show results in selected languages
+        </label>
+      </div>
+
+      <div class="card">
+        <h2>Filters &amp; sorting</h2>
+        <div class="row">
+          <div class="field">
+            <label class="field-label">Sort by</label>
+            <select id="sort">
+              <option value="quality">Quality (recommended)</option>
+              <option value="seeders">Seeders</option>
+              <option value="size">Size</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field-label">Min seeders</label>
+            <input type="number" id="minSeeders" min="0" value="0" />
+          </div>
+          <div class="field">
+            <label class="field-label">Max results</label>
+            <input type="number" id="maxResults" min="1" max="100" value="30" />
+          </div>
+        </div>
+        <div class="row" style="margin-top:12px">
+          <div class="field">
+            <label class="field-label">Min size (GB)</label>
+            <input type="number" id="minSizeGb" min="0" step="0.1" value="0" />
+          </div>
+          <div class="field">
+            <label class="field-label">Max size (GB)</label>
+            <input type="number" id="maxSizeGb" min="0" step="0.1" value="0" />
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Debrid (optional)</h2>
+        <div class="grid2">
+          <div class="field">
+            <label class="field-label">Provider</label>
+            <select id="debridProvider"><option value="">None</option></select>
+          </div>
+          <div class="field">
+            <label class="field-label">API key / token</label>
+            <input type="password" id="debridKey" placeholder="paste your token" />
+          </div>
+        </div>
+        <div class="hint">Cached torrents are marked ⚡ and stream instantly via your debrid account.</div>
+      </div>
+
+      <div class="install">
+        <div class="url" id="urlPreview">—</div>
+        <div class="actions">
+          <button class="btn btn-primary" id="install">Install in Stremio</button>
+          <button class="btn btn-ghost" id="copy">Copy URL</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const QUALITIES = ['2160p', '1080p', '720p', '480p', 'CAM'];
+      const VIDEO_CODECS = ['HEVC', 'AVC', 'AV1', 'XviD'];
+      const AUDIO_CODECS = ['Atmos', 'DTS-X', 'TrueHD', 'DTS-HD', 'DTS', 'EAC3', 'AC3', 'AAC', 'FLAC', 'OPUS'];
+      const AUDIO_CHANNELS = ['7.1', '5.1', '2.0'];
+      const LANGUAGES = ['English', 'Romanian', 'French', 'Spanish', 'German', 'Italian', 'Russian', 'Japanese', 'Korean', 'Hindi', 'Portuguese', 'Chinese', 'Arabic'];
+
+      const state = {
+        providers: new Set(), qualities: new Set(), videoCodecs: new Set(),
+        audioCodecs: new Set(), audioChannels: new Set(), languages: new Set(),
+      };
+
+      function renderChips(containerId, values, set) {
+        const el = document.getElementById(containerId);
+        el.innerHTML = '';
+        for (const v of values) {
+          const chip = document.createElement('div');
+          chip.className = 'chip' + (set.has(v) ? ' active' : '');
+          chip.textContent = v;
+          chip.onclick = () => {
+            if (set.has(v)) set.delete(v); else set.add(v);
+            chip.classList.toggle('active');
+            update();
+          };
+          el.appendChild(chip);
+        }
+      }
+
+      function toUrlSafe(b64) { return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+
+      function buildConfig() {
+        const cfg = {
+          providers: [...state.providers],
+          qualities: [...state.qualities],
+          audioCodecs: [...state.audioCodecs],
+          audioChannels: [...state.audioChannels],
+          videoCodecs: [...state.videoCodecs],
+          hdrOnly: document.getElementById('hdrOnly').checked,
+          languages: [...state.languages],
+          strictLanguage: document.getElementById('strictLanguage').checked,
+          minSeeders: Number(document.getElementById('minSeeders').value) || 0,
+          minSizeGb: Number(document.getElementById('minSizeGb').value) || 0,
+          maxSizeGb: Number(document.getElementById('maxSizeGb').value) || 0,
+          maxResults: Number(document.getElementById('maxResults').value) || 30,
+          sort: document.getElementById('sort').value,
+        };
+        const provider = document.getElementById('debridProvider').value;
+        const key = document.getElementById('debridKey').value.trim();
+        if (provider && key) cfg.debrid = { provider, apiKey: key };
+        return cfg;
+      }
+
+      function encodeConfig(cfg) {
+        const json = JSON.stringify(cfg);
+        const b64 = btoa(unescape(encodeURIComponent(json)));
+        return toUrlSafe(b64);
+      }
+
+      function update() {
+        const cfg = buildConfig();
+        const seg = encodeConfig(cfg);
+        const base = location.origin;
+        const manifest = `${base}/${seg}/manifest.json`;
+        document.getElementById('urlPreview').textContent = manifest;
+        return manifest;
+      }
+
+      document.getElementById('install').onclick = () => {
+        const manifest = update();
+        window.location.href = manifest.replace(/^https?:\/\//, 'stremio://');
+      };
+      document.getElementById('copy').onclick = async () => {
+        const manifest = update();
+        await navigator.clipboard.writeText(manifest);
+        const btn = document.getElementById('copy');
+        const txt = btn.textContent; btn.textContent = 'Copied!';
+        setTimeout(() => (btn.textContent = txt), 1200);
+      };
+
+      ['hdrOnly', 'strictLanguage', 'sort', 'minSeeders', 'maxResults', 'minSizeGb', 'maxSizeGb', 'debridProvider', 'debridKey']
+        .forEach((id) => document.getElementById(id).addEventListener('input', update));
+
+      async function init() {
+        renderChips('qualities', QUALITIES, state.qualities);
+        renderChips('videoCodecs', VIDEO_CODECS, state.videoCodecs);
+        renderChips('audioCodecs', AUDIO_CODECS, state.audioCodecs);
+        renderChips('audioChannels', AUDIO_CHANNELS, state.audioChannels);
+        renderChips('languages', LANGUAGES, state.languages);
+
+        try {
+          const opts = await fetch('/api/options').then((r) => r.json());
+          renderChips('providers', opts.providers.map((p) => p.id), state.providers);
+          const sel = document.getElementById('debridProvider');
+          for (const d of opts.debrid) {
+            const o = document.createElement('option');
+            o.value = d.id; o.textContent = d.name; sel.appendChild(o);
+          }
+        } catch (e) {
+          renderChips('providers', ['yts', 'eztv', 'tpb', 'nyaa'], state.providers);
+        }
+        update();
+      }
+      init();
+    </script>
+  </body>
+</html>
