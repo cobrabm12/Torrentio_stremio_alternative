@@ -80,6 +80,10 @@ Then open <http://localhost:7000/configure>, choose your options and click
 The addon ships as a small multi-stage Docker image (runs as a non-root user,
 persists the SQLite cache to a volume).
 
+> **Self-hosting on your own server?** See
+> [`docs/SELF_HOSTING.md`](docs/SELF_HOSTING.md) for a full home-server guide
+> (Docker + public HTTPS via Cloudflare Tunnel or Caddy).
+
 > **Important:** set `BASE_URL` to the public URL of your instance. Debrid
 > playback links point back at this addon, so they break if `BASE_URL` is wrong.
 
