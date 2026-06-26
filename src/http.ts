@@ -27,3 +27,8 @@ export async function getText(
   const res = await httpClient.get(url, options);
   return res.body;
 }
+
+export async function getBuffer(url: string): Promise<Buffer> {
+  const res = await httpClient.get(url, { responseType: 'buffer' });
+  return res.body as Buffer;
+}

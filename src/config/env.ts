@@ -16,6 +16,12 @@ export const env = {
   scrapeTimeoutMs: int('SCRAPE_TIMEOUT_MS', 8000),
   /** TTL for cached stream results (seconds). */
   streamCacheTtl: int('STREAM_CACHE_TTL', 12 * 60 * 60),
+  /** Directory for the persistent SQLite store. */
+  dataDir: process.env.DATA_DIR ?? './data',
+  /** How long stored torrents stay fresh before a background re-scrape (s). */
+  mediaTtl: int('MEDIA_TTL', 24 * 60 * 60),
+  /** How long cached torrent file lists stay valid (s). */
+  fileListTtl: int('FILELIST_TTL', 30 * 24 * 60 * 60),
   /** TTL for cached metadata lookups (seconds). */
   metaCacheTtl: int('META_CACHE_TTL', 24 * 60 * 60),
   /** Max cached entries before LRU eviction. */

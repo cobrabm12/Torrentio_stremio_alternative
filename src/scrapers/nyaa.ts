@@ -46,6 +46,7 @@ export const nyaaScraper: Scraper = {
           seeders: Number.isFinite(seeders) ? seeders : undefined,
           size: parseSize(sizeText),
           source: 'Nyaa',
+          providerId: 'nyaa',
         });
       });
       return out.slice(0, 50);

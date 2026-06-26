@@ -65,6 +65,7 @@ export const ytsScraper: Scraper = {
             seeders: t.seeds,
             leechers: t.peers,
             source: 'YTS',
+            providerId: 'yts',
           });
         }
       }

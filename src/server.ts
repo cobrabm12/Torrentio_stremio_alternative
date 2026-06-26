@@ -10,6 +10,7 @@ import { getStreams, parseStreamId, resolveStream } from './addon/streamHandler.
 import { decodeConfig } from './config/userConfig.js';
 import { listScrapers } from './scrapers/index.js';
 import { DEBRID_PROVIDERS } from './debrid/index.js';
+import { stats } from './store/db.js';
 import type { StreamType } from './types.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -43,6 +44,9 @@ export async function buildServer() {
   app.get('/api/options', (_req, reply) => {
     reply.send({ providers: listScrapers(), debrid: DEBRID_PROVIDERS });
   });
+
+  // Lightweight cache stats (how much the lazy DB has accumulated).
+  app.get('/api/stats', (_req, reply) => reply.send(stats()));
 
   // Stream endpoint.
   app.get('/:config/stream/:type/:id', async (req, reply) => {

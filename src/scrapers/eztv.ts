@@ -42,6 +42,7 @@ export const eztvScraper: Scraper = {
           seeders: t.seeds,
           leechers: t.peers,
           source: 'EZTV',
+          providerId: 'eztv',
         });
       }
       return out;

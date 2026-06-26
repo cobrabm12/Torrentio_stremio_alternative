@@ -16,8 +16,16 @@ with **advanced quality, audio, HDR and language control** plus optional
   bounds.
 - **Smart scoring** — results are ranked by a tunable quality score (resolution +
   source + audio + HDR + health), not just seeders.
+- **Lazy/hybrid cache** — instead of pre-scraping the whole torrent universe like
+  Torrentio's backend, results are scraped on demand and **persisted to SQLite**.
+  The first lookup for a title scrapes (~2-4s); every later request, for any
+  user, is served from disk in milliseconds. The DB grows only with real usage
+  (MBs, not tens of GBs).
+- **Season packs** — for series we also search complete-season/series packs and
+  resolve the correct episode's file index (by fetching and parsing the
+  `.torrent` file list), so packs play the right episode in both P2P and debrid.
 - **Optimized** — concurrent, fault-isolated scrapers, request coalescing and an
-  LRU/TTL cache so popular titles resolve instantly.
+  in-memory + SQLite cache so popular titles resolve instantly.
 
 ## Architecture
 
@@ -29,7 +37,9 @@ src/
   meta/         Cinemeta IMDB -> title/year resolver
   parser/       Release-title attribute parser (the core)
   process/      Filtering, scoring & sorting pipeline
-  scrapers/     Pluggable providers (YTS, EZTV, TPB, Nyaa) + aggregator
+  scrapers/     Pluggable providers (YTS, EZTV, TPB, 1337x, Nyaa) + aggregator
+  store/        Persistent lazy cache (SQLite)
+  torrent/      .torrent file-list resolver for season packs
   cache.ts      LRU + request coalescing
   server.ts     Fastify routes
 public/
@@ -58,7 +68,9 @@ Then open <http://localhost:7000/configure>, choose your options and click
 | `PORT` | `7000` | Listen port |
 | `BASE_URL` | derived | Public URL (needed for debrid resolve links) |
 | `SCRAPE_TIMEOUT_MS` | `8000` | Per-provider request timeout |
-| `STREAM_CACHE_TTL` | `43200` | Stream cache TTL (s) |
+| `STREAM_CACHE_TTL` | `43200` | In-memory cache TTL (s) |
+| `DATA_DIR` | `./data` | SQLite store directory |
+| `MEDIA_TTL` | `86400` | How long stored torrents stay fresh (s) |
 | `DISABLED_PROVIDERS` | – | Comma-separated provider ids to disable |
 
 ## Tests

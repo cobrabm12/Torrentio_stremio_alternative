@@ -23,6 +23,14 @@ export interface MediaMeta {
   aliases: string[];
 }
 
+/** A file inside a multi-file torrent. */
+export interface TorrentFile {
+  /** Zero-based index within the torrent's file list. */
+  index: number;
+  name: string;
+  size: number;
+}
+
 /** Raw result returned by a scraper before parsing/enrichment. */
 export interface RawTorrent {
   /** Human readable release title, e.g. "Movie.2021.2160p.WEB-DL.DDP5.1.x265-GROUP". */
@@ -35,10 +43,16 @@ export interface RawTorrent {
   size?: number;
   seeders?: number;
   leechers?: number;
-  /** Which provider produced this result. */
+  /** Display name of the provider, e.g. "YTS". */
   source: string;
+  /** Stable provider id used for config filtering, e.g. "yts". */
+  providerId: string;
   /** For multi-file torrents (series packs): the index of the wanted file, if known. */
   fileIdx?: number;
+  /** True when this is a multi-episode / season pack rather than a single episode. */
+  seasonPack?: boolean;
+  /** Known file list (populated lazily for packs to resolve the right episode). */
+  files?: TorrentFile[];
 }
 
 /** Parsed quality/audio/language attributes extracted from a release title. */

@@ -55,6 +55,7 @@ function intersects(a: string[], b: string[]): boolean {
 
 /** Decide whether a torrent passes the user's hard filters. */
 function passesFilters(attrs: ParsedAttributes, raw: RawTorrent, config: UserConfig): boolean {
+  if (config.providers.length && !config.providers.includes(raw.providerId)) return false;
   if (config.qualities.length && !config.qualities.includes(attrs.resolution)) return false;
   if (config.videoCodecs.length && (!attrs.videoCodec || !config.videoCodecs.includes(attrs.videoCodec)))
     return false;
@@ -82,6 +83,8 @@ function computeScore(attrs: ParsedAttributes, raw: RawTorrent, config: UserConf
   if (attrs.videoCodec === 'HEVC' || attrs.videoCodec === 'AV1') score += 60;
   if (attrs.flags.includes('REMUX')) score += 150;
   if (attrs.flags.includes('Proper')) score += 30;
+  // Prefer single-episode releases slightly over season packs at equal quality.
+  if (raw.seasonPack) score -= 40;
 
   // Preferred-language boost (soft, unless strictLanguage already filtered).
   if (config.languages.length && intersects(attrs.languages, config.languages)) score += 300;
